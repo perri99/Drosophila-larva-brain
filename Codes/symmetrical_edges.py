@@ -10,8 +10,11 @@ from scipy.optimize import linear_sum_assignment, quadratic_assignment
 from tqdm import tqdm
 import numba as nb
 import csv
-
-symmetrical_file = 'edge_symmetry3.csv'
+'''
+This program finds the symmetrical edges in the two hemispheres
+Data are stored in the external file edge_symmetry.csv
+'''
+symmetrical_file = 'edge_symmetry.csv'
 
 # reading edges
 edge_list_path = 'edges.csv'  
@@ -32,9 +35,9 @@ for _, data in read_nodes.iterrows():
     hemisphere = data[' hemisphere']
     vids = data[' vids']
     homologue = data[' homologue']
-    # Assicurati che il nodo esista prima di assegnare attributi
+    
     if multigraph.has_node(node_id):
-        # Assegna l'attributo 'Hemisphere' al nodo
+        
         multigraph.nodes[node_id]['Hemisphere'] = hemisphere
         multigraph.nodes[node_id]['vids'] = vids
         multigraph.nodes[node_id]['homologue'] = homologue
@@ -63,15 +66,10 @@ for u, v, key, data in multigraph.edges(data=True, keys=True):
         right_right_subgraph.nodes[v]['vids'] = v_vids
         right_right_subgraph.nodes[v]['homologue'] = v_h
 
-# Apri il file CSV in modalità scrittura
-with open(symmetrical_file, 'w', newline='') as csvfile:
-    # Definisci i nomi delle colonne nel file CSV
-    fieldnames = [ 'weight-L','weight-R', 'attribute']
 
-    # Crea il writer CSV
+with open(symmetrical_file, 'w', newline='') as csvfile:
+    fieldnames = [ 'weight-L','weight-R', 'attribute']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    
-    # Scrivi l'intestazione
     writer.writeheader()
     
     for u, v, key, data in tqdm(right_right_subgraph.edges(data=True, keys=True)):
