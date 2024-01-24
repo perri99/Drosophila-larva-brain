@@ -8,8 +8,8 @@ from networkx.algorithms import isomorphism
 from scipy.optimize import linear_sum_assignment, quadratic_assignment
 '''
 Evaluation of edge symmetry
-MUST BE RUN AFTER 
-Input file is the output file of 
+MUST BE RUN AFTER symmetrical_edges.py
+Input file is the output file of symmetrical_edges.py
 '''
 
 # reading edges
