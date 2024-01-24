@@ -6,7 +6,10 @@ import scipy.sparse as sp
 import itertools
 import pickle
 from collections import defaultdict
-
+'''
+This programs compute the number of the actual edges in the connectome by combination of etypes
+and save the output as a dictionary on an external file 'actaul_edges.pkl'
+'''
 def to_array(my_list):
     my_array = []
     for etype, element in my_list.items():
@@ -37,7 +40,7 @@ def counting_links(config_array, edges_array):
     common_number = len(common_edges)
     return common_number
 # reading edges
-edge_list_path = 'edges.csv'  # Sostituisci con il percorso effettivo del tuo file
+edge_list_path = 'edges.csv'  
 df = pd.read_csv(edge_list_path)
 
 multigraph = nx.MultiDiGraph()
@@ -47,7 +50,6 @@ for _, row in df.iterrows():
     source, target, weight, etype = row['source'], row['target'], row['weight'], row['etype']
     multigraph.add_edge(source, target, weight=weight, attribute=etype)
 
-# Ottieni l'insieme completo dei nodi del multigrafo
 all_nodes = set(multigraph.nodes())
 edges = multigraph.edges(data=True)
 edge_labels = [data['attribute'] for _, _, data in edges]
@@ -57,8 +59,6 @@ subgraphs = [multigraph.edge_subgraph(((u, v, k) for u, v, k, data in multigraph
 adj_matrices = {}
 subgraphs2 = {}
 edges_set = {}
-
-# Aggiungi eventuali nodi mancanti ai sottografi
 for subgraph in subgraphs:
     subgraph_copy = subgraph.copy()
     adj_matrix = np.zeros((len(all_nodes), len(all_nodes)))
@@ -81,7 +81,7 @@ for etype, matrix in adj_matrices.items():
     configurations[etype] = x
     i += 1
 
-# Calcola la somma per tutte le possibili combinazioni di etichette ('aa', 'ad', 'da', 'dd')
+# sum all the combinations of etype ('aa', 'ad', 'da', 'dd')
 configurations['all'] = sum(configurations[etype] for etype in adj_matrices)
 
 for combo in itertools.combinations(adj_matrices, 2):
@@ -90,7 +90,7 @@ for combo in itertools.combinations(adj_matrices, 2):
     
 
 edges_array = to_array(edges_set)
-# Calcola la somma per tutte le possibili combinazioni di triplette
+# triplets
 for combo in itertools.combinations(adj_matrices, 3):
     combo_key = '+'.join(combo)
     configurations[combo_key] = sum(configurations[etype] for etype in combo)
