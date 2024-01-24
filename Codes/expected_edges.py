@@ -7,7 +7,10 @@ import itertools
 import pickle
 from collections import defaultdict
 from tqdm import tqdm
-
+'''
+Computation of expected edges according to a null model
+Datas are saved in the external file expected_edges.pkl
+'''
 def loopless_unweighted(matrix):
     matrix.data[:] = 1
     matrix.setdiag(0)
@@ -54,7 +57,7 @@ for _, row in df.iterrows():
     source, target, weight, etype = row['source'], row['target'], row['weight'], row['etype']
     multigraph.add_edge(source, target, weight=weight, attribute=etype)
 
-# Ottieni l'insieme completo dei nodi del multigrafo
+
 all_nodes = set(multigraph.nodes())
 edges = multigraph.edges(data=True)
 edge_labels = [data['attribute'] for _, _, data in edges]
@@ -102,7 +105,7 @@ prob_array = to_array(prob)
 with open('probabilities.pkl', 'wb') as file:
     pickle.dump(prob, file)
 
-# Calcola la somma per tutte le possibili combinazioni di etichette ('aa', 'ad', 'da', 'dd')
+
 configurations['all'] = sum(configurations[etype] for etype in adj_matrices)
 
 for combo in itertools.combinations(adj_matrices, 2):
@@ -110,7 +113,7 @@ for combo in itertools.combinations(adj_matrices, 2):
     configurations[combo_key] = sum(configurations[etype] for etype in combo)
     
 
-# Calcola la somma per tutte le possibili combinazioni di triplette
+
 for combo in itertools.combinations(adj_matrices, 3):
     combo_key = '+'.join(combo)
     configurations[combo_key] = sum(configurations[etype] for etype in combo)
