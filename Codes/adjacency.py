@@ -1,7 +1,9 @@
 from graph_tool.all import *
 import numpy as np
 import matplotlib.pyplot as plt
-
+'''
+Plotting of adjacency matrix of the four etypes and visualization of the entire connectome
+'''
 # Function to load data from CSV file and create a graph
 def create_graph_from_csv(csv_file):
     # Create an empty directed graph
