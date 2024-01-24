@@ -1,5 +1,6 @@
 # Drosophila-larva-brain
-Project for "Complex Networks" Unibo course
+Project for "Complex Networks" Unibo course.
+The aim of this project is the study of the connectome of the brain of a Drosophila larva: the analysis has been carried out with python language.
 # Requirements
 Plese be sure to have installed the following pyhton packages before proceeding further:
  1. numpy
