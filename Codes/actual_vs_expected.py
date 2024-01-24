@@ -6,36 +6,35 @@ import scipy.sparse as sp
 import itertools
 import pickle
 from scipy.stats import chi2_contingency
-
+'''
+MUST BE EXECUTED AFTER actual_edges.py and expected_edge.py
+This program compare the actual number edges vs expected number of edgese
+The input files are the output files of actual_edges.py and expected_edge.py
+'''
 def normalizza_chiave(chiave):
     return '+'.join(sorted(chiave.split('+')))
 
 with open('expected_edges.pkl', 'rb') as file:
-    # Usa pickle.load per leggere il dizionario dal file
     expected_edges = pickle.load(file)
 
 with open('actual_edges.pkl', 'rb') as file:
-    # Usa pickle.load per leggere il dizionario dal file
     actual_edges = pickle.load(file)
 
-with open('probabilities.pkl', 'rb') as file:
-    # Usa pickle.load per leggere il dizionario dal file
-    probabilities = pickle.load(file)
 
-#key_order = ['ad', 'aa', 'dd', 'da', 'ad+aa', 'dd+da', 'ad+da', 'dd+aa', 'da+aa', 'dd+da', 'ad+aa+dd','ad+aa+da', 'ad+dd+da', 'aa+dd+da', 'all']
-#key_order = list(actual_edges.keys())
+
+
 
 expected_edges_norm = {normalizza_chiave(k): v for k, v in expected_edges.items()}
 actual_edges_norm = {normalizza_chiave(k): v for k, v in actual_edges.items()}
 
 
-# Crea una lista di chiavi ordinate
+# ordered list of keys
 key_order = sorted(set(expected_edges_norm.keys()) | set(actual_edges_norm.keys()))
 
-# Crea una tabella di contingenza
+#contingency table for chi2 test
 contingency_table = [[expected_edges_norm.get(k, 0), actual_edges_norm.get(k, 0)] for k in key_order]
 
-# Esegui il test del chi-quadro
+# ch2 test
 chi2_stat, p_value, _, _ = chi2_contingency(contingency_table)
 
 print(f"Chi2 Stat: {chi2_stat}")
