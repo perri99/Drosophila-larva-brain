@@ -3,7 +3,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.sparse as sp
-
+'''
+Graph metrics for the four etype subgraphs and mutual reciprocity 
+'''
 
 def mutual_reciprocity(source,target):
     source.data[:] = 1
@@ -24,7 +26,7 @@ def synapses_fraction(matrix):
     return forward_synapses/total_synapse, backward_synapses/total_synapse
     
 # reading edges
-edge_list_path = 'edges.csv'  # Sostituisci con il percorso effettivo del tuo file
+edge_list_path = 'edges.csv' 
 df = pd.read_csv(edge_list_path)
 
 multigraph = nx.MultiDiGraph()
@@ -34,7 +36,7 @@ for _, row in df.iterrows():
     source, target, weight, etype = row['source'], row['target'], row['weight'], row['etype']
     multigraph.add_edge(source, target, weight=weight, attribute=etype)
 
-# Ottieni l'insieme completo dei nodi del multigrafo
+
 all_nodes = set(multigraph.nodes())
 total_synapses = sum(weight['weight'] for _, _, weight in multigraph.edges(data=True))
 
@@ -53,7 +55,6 @@ for subgraph in subgraphs:
 
 adj_matrices = []
 
-# Aggiungi eventuali nodi mancanti ai sottografi
 for subgraph in subgraphs:
     subgraph_copy = subgraph.copy()
     adj_matrix = np.zeros((len(all_nodes), len(all_nodes)))
@@ -65,8 +66,7 @@ for subgraph in subgraphs:
 
 # Reciprocities
 for etype_source, matrix_source in zip(set(nx.get_edge_attributes(multigraph, 'attribute').values()), adj_matrices):
-   # forward, backward = synapses_fraction(matrix_source)
-   # print(f"Link type: {etype_source} Forward: {forward} Backward:{backward}")
+  
     for etype_target, matrix_target in zip(set(nx.get_edge_attributes(multigraph, 'attribute').values()), adj_matrices):
         #matrix_target = matrix_target.toarray()
         mut_rec = mutual_reciprocity(matrix_source, matrix_target)
