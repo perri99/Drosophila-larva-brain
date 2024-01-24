@@ -8,59 +8,9 @@ from scipy.sparse import csr_matrix
 from tqdm import tqdm
 from matplotlib.lines import Line2D
 import csv
-
-def graph_matching(graph1, graph2):
-    # Calcola la distanza di modifica tra i due grafi
-    adj_matrix1 = nx.to_numpy_array(graph1)
-    adj_matrix2 = nx.to_numpy_array(graph2)
-    
-    min_dim = min(adj_matrix1.shape[0], adj_matrix2.shape[0])
-    
-    # Ridimensiona entrambe le matrici alla dimensione minima
-    
-    adj_matrix1 = adj_matrix1[:min_dim, :min_dim]
-    adj_matrix2 = adj_matrix2[:min_dim, :min_dim]
-     
-    num_random_inits = 1
-    '''
-    for u, v, data in graph1.edges(data = True):
-        i,j = list(all_nodes).index(u), list(all_nodes).index(v)
-        adj_matrix1[i, j] = data['weight']
-    
-    for u, v, data in graph2.edges(data = True):
-        i,j = list(all_nodes).index(u), list(all_nodes).index(v)
-        adj_matrix2[i, j] = data['weight']
-    '''
-    left_nodes = list(graph1.nodes())
-    right_nodes = list(graph2.nodes())
-    #common_nodes = left_nodes & right_nodes
-    
-    
-    for init in tqdm(range(num_random_inits)):
-        #options = {"partial_match": seed_pairs}
-        result = quadratic_assignment(adj_matrix1, adj_matrix2, method='faq')
-
-        # Ottieni gli indici delle corrispondenze tra i nodi
-        node_matching = result['col_ind']
-        objective_value = result['fun']
-        print(f'Objective value: {objective_value}')
-        #predicted_pairs = [(left_nodes[i], right_nodes[matching_indices[i]]) for i in range(len(left_nodes))]
-        #seed_pairs.extend(predicted_pairs)
-    # Stampa il risultato
-    np.savetxt("L_R.txt", node_matching)
-    
-    print("Corrispondenze tra i nodi:")
-    for idx, match in enumerate(node_matching):
-        print(f"Nodo {idx} nel grafo A corrisponde a Nodo {match} nel grafo B")
-
-def mutual_reciprocity(source,target):
-    source.data[:] = 1
-    target.data[:] = 1   #unweighted
-    source.setdiag(0)    #loopless
-    target.setdiag(0)
-    sum = source.sum()
-    prod = (source.multiply(target.T)).sum()
-    return prod/sum
+'''
+Hemispheres subgraphs
+'''
 
 # reading edges
 edge_list_path = 'edges.csv'  
@@ -90,7 +40,7 @@ for _, data in read_nodes.iterrows():
 
 all_nodes = set(multigraph.nodes())
 all_nodes = sorted(all_nodes, key=lambda node: (str(multigraph.nodes[node]['Hemisphere']), node))
-# Creazione dei quattro sottografi
+#subgraphs
 left_left_subgraph = nx.MultiDiGraph()
 right_right_subgraph = nx.MultiDiGraph()
 left_right_subgraph = nx.MultiDiGraph()
