@@ -6,7 +6,11 @@ import scipy.sparse as sp
 from tqdm import tqdm
 from networkx.algorithms import isomorphism
 from scipy.optimize import linear_sum_assignment, quadratic_assignment
-from memory_profiler import profile
+'''
+Evaluation of edge symmetry
+MUST BE RUN AFTER 
+Input file is the output file of 
+'''
 
 # reading edges
 edge_list_path = 'edges.csv'  
@@ -15,7 +19,7 @@ df = pd.read_csv(edge_list_path)
 nodes_path = 'nodes.csv'
 read_nodes = pd.read_csv(nodes_path)
 
-symmetrical_path = 'edge_symmetry3.csv'
+symmetrical_path = 'edge_symmetry.csv'
 symmetrical_read = pd.read_csv(symmetrical_path)
 
 multigraph = nx.MultiDiGraph()
