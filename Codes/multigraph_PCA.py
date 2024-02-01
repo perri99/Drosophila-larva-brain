@@ -46,7 +46,6 @@ betweenness_centrality = nx.betweenness_centrality(multigraph)
 #eigenvector_centrality = nx.eigenvector_centrality(multigraph)
 pagerank = nx.pagerank(multigraph)
 
-# Crea un DataFrame con le misure di centralità
 node_data = pd.DataFrame({
     'Node': list(multigraph.nodes()),
     'Degree_Centrality': list(degree_centrality.values()),
@@ -55,21 +54,20 @@ node_data = pd.DataFrame({
     'PageRank': list(pagerank.values())
 })
 
-# Seleziona solo le colonne delle centralità per l'analisi PCA
+
 features = ['Degree_Centrality', 'Closeness_Centrality', 'Betweenness_Centrality', 'PageRank']
 X = node_data[features]
 
-# Esegui l'analisi PCA
 pca = PCA(n_components=2)
 principal_components = pca.fit_transform(X)
 print(pca.explained_variance_ratio_)
-# Aggiungi i risultati all'interno del DataFrame
+
 node_data['PC1'] = principal_components[:, 0]
 node_data['PC2'] = principal_components[:, 1]
 hemisphere_color_map = {'left': 'blue', 'right': 'red', 'nan': 'green'}
 
 filtered_hemisphere_colors = []
-default_color = 'gray'  # Colore di default per i valori mancanti
+default_color = 'gray'  
 
 for node in multigraph.nodes:
     hemisphere = multigraph.nodes[node].get('Hemisphere', 'nan')
@@ -84,7 +82,7 @@ plt.legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=
 plt.savefig('multigraph_multiPCA.png')
 plt.show()
 
-# Grafico PCA delle Misure dei Nodi nel multigraph Network
+
 plt.scatter(node_data['PC1'], node_data['PC2'], c=filtered_hemisphere_colors)
 plt.title('PCA delle Misure dei Nodi nel multigraph Network')
 plt.xlabel('Degree centrality')
@@ -100,7 +98,7 @@ for i in range(2952):
         node_id = node_data['Node'][i]
         couple.add(node_id)
 
-# Ora il set 'couple' contiene i nodi di multigraph che soddisfano la condizione
+
 print("Nodi nel set 'couple':", couple)
 for node_id in couple:
     if multigraph.has_node(node_id):
@@ -108,7 +106,7 @@ for node_id in couple:
         print(f"Node ID: {node_id}, Attributes: {node_attributes}")
 
 adjacency_matrix = nx.adjacency_matrix(multigraph)
-pca = PCA()  # You can adjust the number of components as needed
+pca = PCA()  
 principal_components = pca.fit_transform(adjacency_matrix.toarray())
 node_data['PC1'] = principal_components[:, 0]
 node_data['PC2'] = principal_components[:, 1]
@@ -129,12 +127,12 @@ axes[0].set_title('PCA of multigraph Network - PC1')
 axes[0].set_xlabel('Node')
 axes[0].set_ylabel('Principal Component 1')
 
-# Grafico PCA del multigraph Network - PC2
+
 axes[1].bar(node_data['Node'], node_data['PC2'], color = 'blue')
 axes[1].set_title('PCA of multigraph Network - PC2')
 axes[1].set_xlabel('Node')
 axes[1].set_ylabel('Principal Component 2')
 
-plt.tight_layout()  # Ottimizza la disposizione dei subplot
+plt.tight_layout() 
 plt.savefig('multigraph_PCA_combined.png')
 plt.show()
